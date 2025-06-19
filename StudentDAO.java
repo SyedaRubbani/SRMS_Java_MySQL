@@ -2,40 +2,52 @@ import java.sql.*;
 import java.util.*;
 
 public class StudentDAO {
-    public static void addStudent(Student student) {
-        String sql = "INSERT INTO students VALUES (?, ?, ?, ?, ?)";
+
+    // Add student
+    public void addStudent(Student s) throws SQLException {
+        String sql = "INSERT INTO students (roll_no, name, course, year, gpa) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, student.getRollNo());
-            stmt.setString(2, student.getName());
-            stmt.setString(3, student.getCourse());
-            stmt.setInt(4, student.getYear());
-            stmt.setDouble(5, student.getGpa());
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
+
+            pst.setInt(1, s.getRollNo());
+            pst.setString(2, s.getName());
+            pst.setString(3, s.getCourse());
+            pst.setInt(4, s.getYear());
+            pst.setDouble(5, s.getGpa());
+
+            pst.executeUpdate();
         }
     }
 
-    public static List<Student> getAllStudents() {
+    // Get all students
+    public List<Student> getAllStudents() throws SQLException {
         List<Student> list = new ArrayList<>();
         String sql = "SELECT * FROM students";
         try (Connection conn = DBConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+
             while (rs.next()) {
-                Student s = new Student(
-                        rs.getInt("roll_no"),
-                        rs.getString("name"),
-                        rs.getString("course"),
-                        rs.getInt("year"),
-                        rs.getDouble("gpa")
-                );
-                list.add(s);
+                list.add(new Student(
+                    rs.getInt("roll_no"),
+                    rs.getString("name"),
+                    rs.getString("course"),
+                    rs.getInt("year"),
+                    rs.getDouble("gpa")
+                ));
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return list;
     }
-}
+
+    // Update student
+    public void updateStudent(Student s) throws SQLException {
+        String sql = "UPDATE students SET name = ?, course = ?, year = ?, gpa = ? WHERE roll_no = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
+
+            pst.setString(1, s.getName());
+            pst.setString(2, s.getCourse());
+            pst.setInt(3, s.getYear());
+            pst.setDouble(4, s.getGpa());
+            pst.setInt(
