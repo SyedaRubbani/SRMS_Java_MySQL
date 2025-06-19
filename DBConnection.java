@@ -1,10 +1,13 @@
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class DBConnection {
+    private static final String URL = "jdbc:mysql://localhost:3306/university_db";
+    private static final String USER = "root";
+    private static final String PASSWORD = "your_password";
+
     public static Connection getConnection() throws SQLException {
-        String url = "jdbc:mysql://localhost:3306/university_db";
-        String user = "root"; 
-        String password = "password"; 
-        return DriverManager.getConnection(url, user, password);
+        return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 }
